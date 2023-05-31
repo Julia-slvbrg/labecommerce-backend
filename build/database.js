@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.products = exports.users = void 0;
+exports.searchProductByName = exports.getAllProducts = exports.createProduct = exports.getAllUsers = exports.createUser = exports.products = exports.users = void 0;
 exports.users = [
     {
         id: 'u001',
@@ -33,4 +33,44 @@ exports.products = [
         imageUrl: 'https://picsum.photos/seed/Monitor/400'
     }
 ];
+function createUser(inputId, inputName, inputEmail, inputPassword) {
+    const newUser = {
+        id: inputId,
+        name: inputName,
+        email: inputEmail,
+        password: inputPassword,
+        createdAt: new Date().toISOString()
+    };
+    exports.users.push(newUser);
+    return 'Cadastro realizado com sucesso';
+}
+exports.createUser = createUser;
+function getAllUsers() {
+    return exports.users;
+}
+exports.getAllUsers = getAllUsers;
+function createProduct(inputId, inputName, inputPrice, inputDescription, inputImageUrl) {
+    const newProduct = {
+        id: inputId,
+        name: inputName,
+        price: inputPrice,
+        description: inputDescription,
+        imageUrl: inputImageUrl
+    };
+    exports.products.push(newProduct);
+    return 'Produto criado com sucesso';
+}
+exports.createProduct = createProduct;
+function getAllProducts() {
+    return exports.products;
+}
+exports.getAllProducts = getAllProducts;
+function searchProductByName(inputName) {
+    return (exports.products.filter((product) => {
+        const checkProduct = product.name.toLocaleLowerCase().includes(inputName.toLocaleLowerCase());
+        if (checkProduct)
+            return product;
+    }));
+}
+exports.searchProductByName = searchProductByName;
 //# sourceMappingURL=database.js.map

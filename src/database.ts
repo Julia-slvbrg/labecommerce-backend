@@ -33,3 +33,52 @@ export const products: TProduct[] = [
         imageUrl: 'https://picsum.photos/seed/Monitor/400'
     }
 ]
+
+//FUNÇÃO ADICIONAR USUÁRIO
+
+export function createUser(inputId:string, inputName:string, inputEmail:string, inputPassword:string){
+    const newUser:TUser={
+        id: inputId,
+        name: inputName,
+        email: inputEmail,
+        password: inputPassword,
+        createdAt: new Date().toISOString()
+    };
+    users.push(newUser);
+    return 'Cadastro realizado com sucesso'
+}
+
+//FUNÇÃO RETORNAR TODOS OS USUÁRIOS
+
+export function getAllUsers():TUser[]{
+    return users
+}
+
+//FUNÇÃO ADICIONAR PRODUTO
+
+export function createProduct(inputId:string, inputName:string, inputPrice:number, inputDescription:string, inputImageUrl:string){
+    const newProduct:TProduct={
+        id: inputId,
+        name: inputName,
+        price: inputPrice,
+        description: inputDescription,
+        imageUrl: inputImageUrl
+    };
+    products.push(newProduct);
+    return 'Produto criado com sucesso'
+}
+
+//FUNÇÃO RETORNAR TODOS OS PRODUTOS
+
+export function getAllProducts():TProduct[]{
+    return products
+}
+
+//FUNÇÃO PROCURAR UM PRODUTO POR NOME
+
+export function searchProductByName(inputName:string):TProduct[]{
+    return ( products.filter((product)=> {
+        const checkProduct = product.name.toLocaleLowerCase().includes(inputName.toLocaleLowerCase());
+        if(checkProduct) return product;
+    }))
+}
