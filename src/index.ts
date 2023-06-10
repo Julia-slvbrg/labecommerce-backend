@@ -1,99 +1,52 @@
-import { createProduct, createUser, getAllProducts, getAllUsers, products, searchProductByName, users } from "./database";
+import { products, users } from "./database";
 import express, { Request, Response} from "express";
 import cors from "cors";
 import { TProduct, TUser } from "./types";
+import { createUser } from "./endpoints/user/createUser";
+import { getAllUsers } from "./endpoints/user/getAllUsers";
+import { deleteUserById } from "./endpoints/user/deleteUserById";
+import { getAllProducts } from "./endpoints/product/getAllProducts";
+import { getProductByName } from "./endpoints/product/getProductByName";
+import { createProduct } from "./endpoints/product/createProduct";
+import { deleteProductById } from "./endpoints/product/deleteProductById";
+import { editProductById } from "./endpoints/product/editProductById";
 
 
-
-
-//console.log('aplicação iniciada');
-
-//----- ISSO É DOS PASSOS ANTERIORES-------
-/* 
-console.table(products)
-console.table(users)
-*/
-
-//console.log(createUser('u003', 'Gabo', 'gabo@email.com', 'gabo123'))
-
-
-//console.log(getAllUsers())
-
-//console.log(createProduct('prod003', 'SSD gamer', 349.99, 'Acelere seu sistema com velocidades incríveis de leitura.', 'https://picsum.photos/seed/Monitor/400'))
-
-//console.log(getAllProducts())
-
-
-//console.log(searchProductByName('mouse'))
-
-//--------------------------------------------//
 const app = express();
 app.use(express.json());
 app.use(cors());
 
 app.listen(3003, () => {
-    console.log ('Servidor rodando na porta 3003')
+    console.log ('Server running on port 3003')
 });
 
-app.get('/ping', (req: Request, res: Response)=>{
-    res.send('PONG!')
-});
 
 //get all users
-app.get('/users', (req: Request, res: Response)=>{
-    res.status(200).send(users)
-});
+app.get('/users', getAllUsers);
 
-//get all products
-app.get('/products', (req: Request, res: Response)=>{
-    res.status(200).send(products)
-});
-
-//get productc by name
-app.get('/product/search', (req: Request, res: Response)=>{
-    const name = req.query.name as string
-
-    if(!name){
-        res.status(400).send(['Produto não encontrado', products])
-    }
-
-    const searchProductByName = products.filter((product)=>{
-        return product.name.toLocaleLowerCase().includes(name.toLocaleLowerCase())
-    })
-
-    searchProductByName.length > 0? res.status(200).send(searchProductByName) : res.status(400).send(['Produto não encontrado', products])
-});
 
 //create user
-app.post('/users', (req: Request, res: Response)=>{
-    const {id, name, email, password, createdAt} = req.body;
+app.post('/users', createUser);
 
-    const newUser:TUser={
-        id,
-        name,
-        email,
-        password,
-        createdAt: new Date().toISOString()
-    };
 
-    users.push(newUser);
-    res.status(201).send('Cadastro realizado com sucesso');
-    console.log(users);
-})
+//delete user by id
+app.delete('/users/:id', deleteUserById)
+
+
+//get all products
+app.get('/products', getAllProducts);
+
+
+//get productc by name
+app.get('/product/search', getProductByName);
+
 
 //create product
-app.post('/products', (req: Request, res: Response)=>{
-    const {id, name, price, description, imageUrl} = req.body;
+app.post('/products', createProduct)
 
-    const newProduct:TProduct={
-        id,
-        name,
-        price,
-        description,
-        imageUrl
-    }
 
-    products.push(newProduct);
-    res.status(201).send('Produto cadastrado com sucesso')
-    console.log(products)
-})
+//delete product by id
+app.delete('/products/:id', deleteProductById)
+
+//edit product by id
+app.put('/products/:id', editProductById)
