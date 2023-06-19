@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { products } from "../../database";
 
-export const getProductByName = (req: Request, res: Response) => {
+export const getAllProducts = (req: Request, res: Response) => {
     try {
         const name = req.query.name as string;
         
