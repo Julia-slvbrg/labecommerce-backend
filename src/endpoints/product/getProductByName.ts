@@ -2,15 +2,34 @@ import { Request, Response } from "express";
 import { products } from "../../database";
 
 export const getProductByName = (req: Request, res: Response) => {
-    const name = req.query.name as string;
+    try {
+        const name = req.query.name as string;
+        
+        if(name){
+            if(name.length<2){
+                res.status(400);
+                throw new Error('Invalid name, the entry must have two or more characters. Try again.');
+            }
+        }else{
+            res.status(200).send(products);
+        };
+    
+        const searchProductByName = products.filter((product)=>{
+            return product.name.toLocaleLowerCase().includes(name.toLocaleLowerCase())
+        });
 
-    if(!name){
-        res.status(400).send(['Product not found', products])
+        if(!searchProductByName || searchProductByName.length===0){
+            res.status(400);
+            throw new Error('Product not found.');
+        };
+
+        res.status(200).send(searchProductByName);
+        
+    } catch (error) {
+        if(error instanceof Error){
+            res.status(404).send(error.message);
+        }else{
+            res.status(500).send('Known error.');
+        }
     };
-
-    const searchProductByName = products.filter((product)=>{
-        return product.name.toLocaleLowerCase().includes(name.toLocaleLowerCase())
-    });
-
-    searchProductByName.length > 0? res.status(200).send(searchProductByName) : res.status(400).send(['Product not found', products]);
 }

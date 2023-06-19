@@ -1,7 +1,6 @@
 import { products, users } from "./database";
 import express, { Request, Response} from "express";
 import cors from "cors";
-import { TProduct, TUser } from "./types";
 import { createUser } from "./endpoints/user/createUser";
 import { getAllUsers } from "./endpoints/user/getAllUsers";
 import { deleteUserById } from "./endpoints/user/deleteUserById";
