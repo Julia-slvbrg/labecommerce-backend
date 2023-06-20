@@ -1,12 +1,10 @@
 import { products, users } from "./database";
 import express, { Request, Response} from "express";
 import cors from "cors";
-import { TProduct, TUser } from "./types";
 import { createUser } from "./endpoints/user/createUser";
 import { getAllUsers } from "./endpoints/user/getAllUsers";
 import { deleteUserById } from "./endpoints/user/deleteUserById";
 import { getAllProducts } from "./endpoints/product/getAllProducts";
-import { getProductByName } from "./endpoints/product/getProductByName";
 import { createProduct } from "./endpoints/product/createProduct";
 import { deleteProductById } from "./endpoints/product/deleteProductById";
 import { editProductById } from "./endpoints/product/editProductById";
@@ -33,12 +31,8 @@ app.post('/users', createUser);
 app.delete('/users/:id', deleteUserById)
 
 
-//get all products
-app.get('/products', getAllProducts);
-
-
 //get productc by name
-app.get('/product/search', getProductByName);
+app.get('/product/search', getAllProducts);
 
 
 //create product

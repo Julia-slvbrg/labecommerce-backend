@@ -3,5 +3,9 @@ import { users } from "../../database"
 
 
 export const getAllUsers = (req: Request, res: Response) => {
-    res.status(200).send(users)
+    try {
+        res.status(200).send(users)
+    } catch (error) {
+        res.status(400).send(error)
+    }
 }
