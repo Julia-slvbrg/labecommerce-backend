@@ -29,7 +29,7 @@ export const createProduct = (req: Request, res: Response) => {
             const checkId = products.find((product)=> product.id === id);
             if(checkId){
                 res.status(400);
-                throw new Error('This id is already been used. Try again.')
+                throw new Error('This id is already being used. Try again.')
             };
 
         }else{

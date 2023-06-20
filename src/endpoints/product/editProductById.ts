@@ -18,29 +18,37 @@ export const editProductById = (req: Request, res: Response) => {
             }
         };
 
-        if(typeof(name)!=='string' || name === ' ' || name.length<=0){
-            res.status(422);
-            throw new Error('Invalid information type, name must be a valid string. Try again.');
-        }
-
-        if(typeof(price)==="number"){
-            if(price<=0){
+        if(name){
+            if(typeof(name)!=='string' || name === ' ' || name.length<=0){
                 res.status(422);
-                throw new Error('Invalid information, price must be a number higher than zero. Try again.');
-            };
-        }else{
-            res.status(422);
-            throw new Error('Invalid information type, price must be a number. Try again.');
+                throw new Error('Invalid information type, name must be a valid string. Try again.');
+            }
         };
 
-        if(typeof(description)!=="string" || description===" " || description.length<=0){
-            res.status(422);
-            throw new Error('Invalid information, the description must be a valid string. Try again');
+        if(price){
+            if(typeof(price)==="number"){
+                if(price<=0){
+                    res.status(422);
+                    throw new Error('Invalid information, price must be a number higher than zero. Try again.');
+                }
+            }else{
+                res.status(422);
+                throw new Error('Invalid information type, price must be a number. Try again.');
+            }
         };
 
-        if(typeof(imageUrl)!=="string" || imageUrl===" " || imageUrl.length<=0 ){
-            res.status(422);
-            throw new Error('Invalid information type, the product must have an image. Try again.');
+        if(description){
+            if(typeof(description)!=="string" || description===" " || description.length<=0){
+                res.status(422);
+                throw new Error('Invalid information, the description must be a valid string. Try again');
+            }
+        };
+
+        if(imageUrl){
+            if(typeof(imageUrl)!=="string" || imageUrl===" " || imageUrl.length<=0 ){
+                res.status(422);
+                throw new Error('Invalid information type, the product must have an image. Try again.');
+            }
         };
 
         const findProduct = products.find((product)=>{

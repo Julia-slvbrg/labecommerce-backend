@@ -8,5 +8,4 @@ export const getAllUsers = (req: Request, res: Response) => {
     } catch (error) {
         res.status(400).send(error)
     }
-    
 }

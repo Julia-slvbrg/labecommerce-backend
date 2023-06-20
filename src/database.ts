@@ -15,7 +15,7 @@ export const users: TUser[] = [
         password: 'mumu123',
         createdAt: new Date().toISOString()
     }
-]
+];
 
 export const products: TProduct[] = [
     {
