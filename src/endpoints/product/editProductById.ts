@@ -72,7 +72,7 @@ export const editProductById = (req: Request, res: Response) => {
         if(error instanceof Error){
             res.send(error.message);
         }else{
-            res.send('Known error.');
+            res.send('Unknown error.');
         };
     }
 }
