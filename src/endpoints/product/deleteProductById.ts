@@ -7,7 +7,7 @@ export const deleteProductById = (req: Request, res: Response) => {
 
         if(!id){
             res.status(422);
-            throw new Error("Please inform products id.");
+            throw new Error("Please inform the product id.");
         };
 
         if(typeof(id)==="string"){
@@ -32,7 +32,7 @@ export const deleteProductById = (req: Request, res: Response) => {
             throw new Error('Product does not exist, confirm id and try again.');
         }
 
-    } catch (error) {
+    } catch (error:any) {
         if(error instanceof Error){
             res.send(error.message);
         }else{

@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { products } from "../../database";
+import { TProduct } from "../../types";
 
-export const editProductById = (req: Request, res: Response) => {
+export const editProductById = (req: Request<{id: string}, TProduct, TProduct>, res: Response) => {
     try {
         const id = req.params.id;
         const {name, price, description, imageUrl} = req.body;
@@ -14,7 +15,7 @@ export const editProductById = (req: Request, res: Response) => {
         if(typeof(id)==='string'){
             if(id.substring(0,4)!=='prod'){
                 res.status(422);
-                throw new Error('Invalide information, id must start with the word "prod". Try again.');
+                throw new Error('Invalid information, id must start with the word "prod". Try again.');
             }
         };
 
@@ -68,7 +69,7 @@ export const editProductById = (req: Request, res: Response) => {
             throw new Error('Error, product not found. Try again.');
         };
 
-    } catch (error) {
+    } catch (error:any) {
         if(error instanceof Error){
             res.send(error.message);
         }else{

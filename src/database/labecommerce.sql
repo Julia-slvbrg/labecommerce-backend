@@ -5,8 +5,10 @@ CREATE TABLE users(
     name TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT UNIQUE NOT NULL,
-    created_at TEXT NOT NULL
+    created_at TEXT DEFAULT (DATETIME('now', 'localtime')) NOT NULL
 );
+
+DROP TABLE users;
 
 -- Populating the users table
 INSERT INTO users(id, name, email, password, created_at)
@@ -78,7 +80,7 @@ CREATE TABLE IF NOT EXISTS purchases (
     purchase_id TEXT PRIMARY KEY UNIQUE NOT NULL,
     buyer_id TEXT NOT NULL,
     total_price REAL NOT NULL,
-    created_at TEXT NOT NULL,
+    created_at TEXT DEFAULT (DATETIME('now', 'localtime')) NOT NULL,
     FOREIGN KEY (buyer_id)
     REFERENCES users(id)
         ON UPDATE CASCADE
@@ -91,9 +93,9 @@ SELECT * FROM purchases;
 
 --Populating purchases table
 INSERT INTO purchases(purchase_id, buyer_id, total_price, created_at)
-VALUES  ('p001', 'u002', 1900, DATETIME('now')),
-        ('p002', 'u001', 250, DATETIME('now')),
-        ('p003', 'u002', 250, DATETIME('now'));
+VALUES  ('p001', 'u002', 1900),
+        ('p002', 'u001', 250),
+        ('p003', 'u002', 250);
 
 --Updating purchases table
 UPDATE purchases 
@@ -141,7 +143,7 @@ CREATE TABLE IF NOT EXISTS purchases_products(
     purchase_id TEXT NOT NULL,
     product_id TEXT NOT NULL,
     quantity INTEGER NOT NULL,
-    FOREIGN KEY (purchase_id) REFERENCES purchases(id)
+    FOREIGN KEY (purchase_id) REFERENCES purchases(purchase_id)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id)
@@ -174,3 +176,14 @@ SELECT
 FROM purchases_products
 INNER JOIN products ON products.id = purchases_products.product_id
 INNER JOIN purchases ON purchases.purchase_id = purchases_products.purchase_id;
+
+
+SELECT * FROM users;
+
+DELETE FROM users
+WHERE id = 'u005';
+
+DROP TABLE users;
+
+
+
