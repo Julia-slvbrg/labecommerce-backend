@@ -1,19 +1,11 @@
 import { Request, Response } from "express";
 import { TProduct } from "../../types";
-import { products } from "../../database";
+import { db } from "../../database/knex";
 
-export const createProduct = (req: Request, res: Response) => {
+export const createProduct = async (req: Request<{}, TProduct, TProduct>, res: Response) => {
     try {
         const {id, name, price, description, imageUrl} = req.body;
-
-        const newProduct:TProduct={
-            id,
-            name,
-            price,
-            description,
-            imageUrl
-        };
-
+        
         if(!id || !name || !price || !description || !imageUrl){
             res.status(400);
             throw new Error('Incomplete information log. Complete all the information.')
@@ -23,10 +15,13 @@ export const createProduct = (req: Request, res: Response) => {
             if(id.substring(0,4)!=='prod'){
                 res.status(422);
                 throw new Error('Invalid information, id must start with the word "prod". Try again.')
-                
             };
 
-            const checkId = products.find((product)=> product.id === id);
+            const checkId = await db.raw(`
+                SELECT * FROM products
+                WHERE id = '${id}'
+            `);
+
             if(checkId){
                 res.status(400);
                 throw new Error('This id is already being used. Try again.')
@@ -41,6 +36,7 @@ export const createProduct = (req: Request, res: Response) => {
             res.status(422);
             throw new Error('Invalid information type, name must be a valid string. Try again.')
         };
+
         if(typeof(price)==='number'){
             if(price<=0){
                 res.status(422);
@@ -49,7 +45,7 @@ export const createProduct = (req: Request, res: Response) => {
         }else{
             res.status(422);
             throw new Error('Invalid information type, price must be a number. Try again.')
-        }
+        };
 
         if(typeof (description) !== 'string' || description.length<=0 || description === " "){
             res.status(422);
@@ -61,10 +57,14 @@ export const createProduct = (req: Request, res: Response) => {
             throw new Error('Invalid information type, the product must have an image. Try again.')
         };
 
-        products.push(newProduct);
-        res.status(201).send('Product registered successfully.');
+        await db.raw(`
+            INSERT INTO products(id, name, price, description, image_url)
+            VALUES('${id}', '${name}', '${price}', '${description}', '${imageUrl}');
+        `);
 
-    } catch (error) {
+        res.status(201).send('Product registered successfully.')
+
+    } catch (error:any) {
         if(error instanceof Error){
             res.send(error.message)
         }else{

@@ -1,24 +1,15 @@
 import { Request, Response } from "express";
 import { TUser } from "../../types";
-import { users } from "../../database";
+import { db } from "../../database/knex";
 
 
-export const createUser = (req: Request, res: Response) => {
-
+export const createUser = async (req: Request<{}, TUser, TUser>, res: Response) => {
     try {
-        const {id, name, email, password} = req.body
-
-        const newUser:TUser={
-            id,
-            name,
-            email,
-            password,
-            createdAt: new Date().toISOString()
-        };
+        const {id, name, email, password} = req.body;
 
         if(!id || !name || !email || !password){
             res.status(400);
-            throw new Error('Incomplete information log. Complete all the information.')
+            throw new Error('Incomplete information log. Complete the entire log and try again.')
         };
 
         if(typeof (id)==='string' && id.length>0){
@@ -54,22 +45,46 @@ export const createUser = (req: Request, res: Response) => {
             }
         };
 
-        const checkId = users.find((user)=> user.id === id);
-        const checkEmail = users.find((user)=> user.email === email);
+        const [usersIsEmpty] = await db.raw(`
+            SELECT * FROM users;
+        `);
 
-        if(checkId){
-            res.status(400);
-            throw new Error('This id is already being used. Choose another one.')
-        }
-        if(checkEmail){
-            res.status(400);
-            throw new Error('There can only be one account per email.')
+        if(!usersIsEmpty && usersIsEmpty.length===0){
+            const result = await db.raw(`
+                INSERT INTO users(id, name, email, password)
+                VALUES('${id}', '${name}', '${email}', '${password}');
+            `);
+
+        }else{
+            const [checkId] = await db.raw(`
+                SELECT * FROM users
+                WHERE id = '${id}';
+            `);
+
+            const [checkEmail] = await db.raw(`
+                SELECT * FROM users
+                WHERE email = '${email}';
+            `);
+
+            if(checkId){
+                res.status(400);
+                throw new Error('This id is already being used. Choose another one.')
+            };
+
+            if(checkEmail){
+                res.status(400);
+                throw new Error('There can only be one account per email.')
+            };
+
+            await db.raw(`
+                INSERT INTO users(id, name, email, password)
+                VALUES('${id}', '${name}', '${email}', '${password}');
+            `);
         };
 
-        users.push(newUser);
-        res.status(201).send('User successfully registered.');
+        res.status(201).send('User successfully registered.')
 
-    } catch (error) {
+    } catch (error:any) {
         if(error instanceof Error){
             res.send(error.message)
         }else{

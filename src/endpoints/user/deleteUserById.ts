@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { users } from "../../database";
 
 
-export const deleteUserById = (req: Request, res: Response) => {
+export const deleteUserById = (req: Request<{id: string}>, res: Response) => {
     try {
         const id = req.params.id;
 
@@ -33,7 +33,7 @@ export const deleteUserById = (req: Request, res: Response) => {
             throw new Error('User does not exist, confirm id and try again.');
         };
 
-    } catch (error) {
+    } catch (error:any) {
         if(error instanceof Error){
             res.send(error.message);
         }else{
