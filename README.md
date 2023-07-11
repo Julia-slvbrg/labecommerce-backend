@@ -32,6 +32,8 @@ For the purchases, the API allows you to add a new purchase and to get the data 
   
 ## Demonstration
 
+https://github.com/Julia-slvbrg/labecommerce-backend/assets/114543081/88acc1ce-3b0f-4e5f-bd93-1bdd2e6d003e
+
 ## How to run
 ```bash
 # Clone this repository
@@ -62,4 +64,5 @@ $ npm run dev
 
 ## Next steps
  -[ ] Expand the database
+ 
  -[ ] Implement the API in a frontend application
