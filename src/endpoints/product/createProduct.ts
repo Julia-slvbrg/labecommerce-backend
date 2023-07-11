@@ -17,10 +17,7 @@ export const createProduct = async (req: Request<{}, TProduct, TProduct>, res: R
                 throw new Error('Invalid information, id must start with the word "prod". Try again.')
             };
 
-            const checkId = await db.raw(`
-                SELECT * FROM products
-                WHERE id = '${id}'
-            `);
+            const [checkId] = await db('products').where({id:id});
 
             if(checkId){
                 res.status(400);
@@ -57,12 +54,17 @@ export const createProduct = async (req: Request<{}, TProduct, TProduct>, res: R
             throw new Error('Invalid information type, the product must have an image. Try again.')
         };
 
-        await db.raw(`
-            INSERT INTO products(id, name, price, description, image_url)
-            VALUES('${id}', '${name}', '${price}', '${description}', '${imageUrl}');
-        `);
+        const newProduct = {
+            id,
+            name,
+            price,
+            description,
+            image_url: imageUrl
+        };
 
-        res.status(201).send('Product registered successfully.')
+        await db('products').insert(newProduct);
+       
+        res.status(201).send('Product successfully registered.')
 
     } catch (error:any) {
         if(error instanceof Error){

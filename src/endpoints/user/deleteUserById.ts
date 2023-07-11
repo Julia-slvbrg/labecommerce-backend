@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { users } from "../../database";
+import { db } from "../../database/knex";
 
 
-export const deleteUserById = (req: Request<{id: string}>, res: Response) => {
+export const deleteUserById = async (req: Request<{id: string}>, res: Response) => {
     try {
         const id = req.params.id;
 
@@ -21,17 +21,17 @@ export const deleteUserById = (req: Request<{id: string}>, res: Response) => {
             throw new Error('Invalid information type, id must be a string. Try again.');
         };
 
-        const findUserIndex = users.findIndex((user)=>{
-            return user.id === id
-        });
+        try {
+            await db('users').del().where({id:id}); 
+            res.status(200).send('User successfully deleted.')
 
-        if(findUserIndex>=0){
-            users.splice(findUserIndex, 1);
-            res.status(200).send('User deleted successfully.');
-        }else{
-            res.status(400);
-            throw new Error('User does not exist, confirm id and try again.');
-        };
+        } catch (error:any) {
+            if(error instanceof Error){
+                res.send(error.message);
+            }else{
+                res.send('Unknown error.')
+            }
+        }
 
     } catch (error:any) {
         if(error instanceof Error){

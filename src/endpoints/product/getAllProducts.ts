@@ -11,9 +11,9 @@ export const getAllProducts = async (req: Request, res: Response) => {
             throw new Error('Invalid name, the entry must have two or more characters. Try again.');
         };
 
-        const results = await db.raw(`
-            SELECT * FROM products
-        `);
+        const results = await db('products').select(
+           'id', 'name', 'price', 'description', 'image_url AS imageURL'
+        );
     
         const searchProductByName = results.filter((product: TProduct)=>{
             return product.name.toLocaleLowerCase().includes(name.toLocaleLowerCase())
@@ -24,26 +24,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
             throw new Error('Product not found.');
         }; 
     
-        if(searchProductByName.length > 0){ 
-
-            const products = searchProductByName.map((product:any)=>{
-                const productCopy = {...product};
-                productCopy.imageUrl = productCopy.image_url;
-                delete productCopy.image_url;
-                return productCopy
-            });
-            res.status(200).send(products)
-
-        }else{ 
-
-            const products = results.map((product:any)=>{
-                const productCopy = {...product};
-                productCopy.imageUrl = productCopy.image_url;
-                delete productCopy.image_url;
-                return productCopy
-            });
-            res.status(200).send(products) 
-        }
+        searchProductByName.length>0? res.status(200).send(searchProductByName): res.status(200).send(results); 
         
     } catch (error:any) {
         if(error instanceof Error){
@@ -53,25 +34,3 @@ export const getAllProducts = async (req: Request, res: Response) => {
         }
     };
 }
-
-/* 
-    let results;
-
-        if(name){
-            results = await db.raw(`
-                SELECT * FROM products
-                WHERE name LIKE '%${name}%';
-            `)
-        }else{
-            results = await db.raw(`
-                SELECT * FROM products;
-            `)
-        };
-
-        if(!results || results.length === 0){
-            res.status(400);
-            throw new Error ('Product not found.')
-        };
-
-        res.status(200).send(results)
-*/
