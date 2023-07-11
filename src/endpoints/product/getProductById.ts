@@ -17,23 +17,11 @@ export const getProductById = async (req: Request<{id:string}>, res: Response) =
             }
         };
 
-        const product = await db.raw(`
-            SELECT * FROM products
-            WHERE id='${id}';
-        `);
+        const product = await db('products').select(
+            'id', 'name', 'price', 'description', 'image_url AS imageUrl'
+        ).where({id:id});
 
-        if(product && product.length>0){
-
-            const productCopy = {...product[0]};
-            productCopy.imageUrl = productCopy.image_url;
-            delete productCopy.image_url;
-
-            res.status(200).send(productCopy);
-        }else{
-
-            res.status(400);
-            throw new Error('Product not found. Try again.')
-        }
+       product.length>0? res.status(200).send(product) : res.status(400).send('Product not found. Check the id and try again.')
 
     } catch (error:any) {
         if(error instanceof Error){

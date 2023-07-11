@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { products } from "../../database";
 import { TProduct } from "../../types";
+import { db } from "../../database/knex";
 
-export const editProductById = (req: Request<{id: string}, TProduct, TProduct>, res: Response) => {
+export const editProductById = async (req: Request<{id: string}, TProduct, TProduct>, res: Response) => {
     try {
         const id = req.params.id;
         const {name, price, description, imageUrl} = req.body;
@@ -52,22 +52,28 @@ export const editProductById = (req: Request<{id: string}, TProduct, TProduct>, 
             }
         };
 
-        const findProduct = products.find((product)=>{
-            return product.id === id
-        });
+        const [product] = await db('products').where({id:id});
 
-        if(findProduct){
-            findProduct.name = name || findProduct.name
-            findProduct.price = price || findProduct.price
-            findProduct.description = description || findProduct.description
-            findProduct.imageUrl = imageUrl || findProduct.imageUrl
+        if(product){
+            try {
+                const updatedProduct = {
+                    name: name || product.name, 
+                    price: price || product.price, 
+                    description: description || product.description, 
+                    image_url: imageUrl || product.image_url
+                };
 
-            res.status(200).send('Product updated successfully');
+                await db('products').update(updatedProduct).where({id:id});
+                res.status(200).send('Product successfully updated.')
 
-        }else{
-            res.status(400);
-            throw new Error('Error, product not found. Try again.');
-        };
+            } catch (error:any) {
+                if(error instanceof Error){
+                    res.send(error.message);
+                }else{
+                    res.send('Unknown error.')
+                }
+            }
+        }
 
     } catch (error:any) {
         if(error instanceof Error){

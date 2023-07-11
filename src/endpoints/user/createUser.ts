@@ -45,26 +45,24 @@ export const createUser = async (req: Request<{}, TUser, TUser>, res: Response) 
             }
         };
 
-        const [usersIsEmpty] = await db.raw(`
-            SELECT * FROM users;
-        `);
+        const usersIsEmpty = await db('users');
 
-        if(!usersIsEmpty && usersIsEmpty.length===0){
-            const result = await db.raw(`
-                INSERT INTO users(id, name, email, password)
-                VALUES('${id}', '${name}', '${email}', '${password}');
-            `);
+        if(usersIsEmpty && usersIsEmpty.length===0){
+        
+            const newUser = {
+                id,
+                name,
+                email,
+                password
+            };
+
+            await db('users').insert(newUser);
 
         }else{
-            const [checkId] = await db.raw(`
-                SELECT * FROM users
-                WHERE id = '${id}';
-            `);
 
-            const [checkEmail] = await db.raw(`
-                SELECT * FROM users
-                WHERE email = '${email}';
-            `);
+            const [checkId] = await db('users').where({id:id})
+
+            const [checkEmail] = await db('users').where({email:email})
 
             if(checkId){
                 res.status(400);
@@ -76,10 +74,14 @@ export const createUser = async (req: Request<{}, TUser, TUser>, res: Response) 
                 throw new Error('There can only be one account per email.')
             };
 
-            await db.raw(`
-                INSERT INTO users(id, name, email, password)
-                VALUES('${id}', '${name}', '${email}', '${password}');
-            `);
+            const newUser = {
+                id,
+                name,
+                email,
+                password
+            };
+
+            await db('users').insert(newUser)
         };
 
         res.status(201).send('User successfully registered.')

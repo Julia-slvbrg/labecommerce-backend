@@ -17,17 +17,12 @@ export const createPurchase = async (req: Request<{}, TPurchase, TPurchase>, res
                 throw new Error('Invalid information, id must start with the words "pur". Try again.')
             };
             
-            const checkId = await db.raw(`
-                SELECT * FROM purchases
-                WHERE purchase_id = '${id}';
-            `);
-
+            const [checkId] = await db('purchases').where({purchase_id:id});
     
             if(checkId){
                 res.status(422);
                 throw new Error('This id is already being used. Try again.')
             }
-            
         };
 
         if(typeof (buyer)==='string' && buyer.length>0){
@@ -36,10 +31,7 @@ export const createPurchase = async (req: Request<{}, TPurchase, TPurchase>, res
                 throw new Error('Invalid information, this is the id of the buyer and it must start with the letter "u". Try again.')
             };
 
-            const checkBuyer = await db.raw(`
-                SELECT * FROM users
-                WHERE id = '${buyer}';
-            `);
+           const [checkBuyer] = await db('users').where({id:buyer});
 
             if(!checkBuyer){
                 res.status(422);
@@ -54,10 +46,7 @@ export const createPurchase = async (req: Request<{}, TPurchase, TPurchase>, res
                     throw new Error('Invalid information, this is the id of the product and it must start with the word "prod". Try again.')
                 };
 
-                const checkId = await db.raw(`
-                    SELECT * FROM products
-                    WHERE id = '${product.id}'
-                `);
+                const [checkId] = await db('products').where({id:product.id});
 
                 if(!checkId){
                     res.status(422);
@@ -75,10 +64,7 @@ export const createPurchase = async (req: Request<{}, TPurchase, TPurchase>, res
 
         for (let product of products){
             try {
-                const priceArr = await db.raw(`
-                    SELECT price FROM products
-                    WHERE id = '${product.id}';
-                `);
+                const priceArr = await db('products').select('price').where({id:product.id});
 
                 const price = parseFloat(priceArr[0].price);
 
@@ -100,20 +86,25 @@ export const createPurchase = async (req: Request<{}, TPurchase, TPurchase>, res
             }
         };
 
-        await db.raw(`
-            INSERT INTO purchases(purchase_id, buyer_id, total_price)
-            VALUES('${id}', '${buyer}', '${total_price}')
-        `);
+        const newPurchase = {
+            purchase_id: id,
+            buyer_id: buyer,
+            total_price
+        };
+
+        await db('purchases').insert(newPurchase);
 
         for (const product of products){
-            await db.raw(`
-                INSERT INTO purchases_products(purchase_id, product_id, quantity)
-                VALUES('${id}', '${product.id}', '${product.quantity}')
-            `)
+            const newPurchasedProduct = {
+                purchase_id: id,
+                product_id: product.id,
+                quantity: product.quantity
+            };
+
+            await db('purchases_products').insert(newPurchasedProduct);
         };
         
         res.status(201).send('Purchase successfully registered.')
-
 
     } catch (error: any) {
         if(error instanceof Error){
