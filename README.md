@@ -16,6 +16,7 @@ For the purchases, the API allows you to add a new purchase and to get the data 
 - <a href="#functionalities">Application functionalities</a>
 - <a href="#demonstration">Demonstration</a>
 - <a href="#run">How to run the application</a>
+- <a href="#endpoints">Application endpoints</a>
 - <a href="#tecnologies-used"> Tecnologies used</a>
 - <a href="#developer">Developer</a>
 - <a href="#next-steps">Next steps</a>
@@ -23,6 +24,7 @@ For the purchases, the API allows you to add a new purchase and to get the data 
 ## Application functionalities
  - [x]  Get all users  
  - [x]  Create user
+ - [x]  Delete user by id
  - [x]  Create product
  - [x]  Get all products 
  - [x]  Edit product by id
@@ -37,7 +39,7 @@ https://github.com/Julia-slvbrg/labecommerce-backend/assets/114543081/88acc1ce-3
 ## How to run
 ```bash
 # Clone this repository
-$ git clone linkrepo
+$ git clone repolink
 
 # Acess the app folder on your terminal
 $ cd labecommerce-backend
@@ -50,6 +52,36 @@ $ npm run dev
 
 # Use your prefered API test tool run the application
 ```
+
+## Application endpoints
+
+1. Endpoints for the users table:
+ - Get all users: 
+    - app.get('/users', getAllUsers);
+ - Create user
+    - app.post('/users', createUser);
+ - Delete user by id
+    - app.delete('/users/:id', deleteUserById);
+
+2. Endpoints for the products table:
+ - Get productc by name
+    - app.get('/product/search', getAllProducts);
+ - Get product by id
+    - app.get('/products/:id', getProductById);
+ - Create product
+    - app.post('/products', createProduct);
+ - Delete product by id
+    - app.delete('/products/:id', deleteProductById);
+ - Edit product by id
+    - app.put('/products/:id', editProductById);
+
+3. Endpoints for the purchases table:
+ - Create purchase
+    - app.post('/purchases', createPurchase);
+ - Get purchase by id
+    - app.get('/purchases/:id', getPurchaseById);
+ - Delete purchase by id
+    - app.delete('/purchases/:id', deletePurchaseById);
 
 ## Tecnologies used
 1. TypeScript

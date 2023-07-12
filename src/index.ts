@@ -10,6 +10,7 @@ import { editProductById } from "./endpoints/product/editProductById";
 import { createPurchase } from "./endpoints/purchase/createPurchase";
 import { getProductById } from "./endpoints/product/getProductById";
 import { getPurchaseById } from "./endpoints/purchase/getPurchaseById";
+import { deletePurchaseById } from "./endpoints/purchase/deletePurchaseById";
 
 
 const app = express();
@@ -47,3 +48,5 @@ app.put('/products/:id', editProductById);
 app.post('/purchases', createPurchase);
 //get purchase by id
 app.get('/purchases/:id', getPurchaseById);
+//delete purchase by id
+app.delete('/purchases/:id', deletePurchaseById);
