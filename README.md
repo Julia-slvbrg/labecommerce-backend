@@ -50,7 +50,7 @@ $ npm install
 # Run the app 
 $ npm run dev
 
-# Use your prefered API test tool run the application
+# Use your prefered API test tool to run the application
 ```
 
 ## Application endpoints
